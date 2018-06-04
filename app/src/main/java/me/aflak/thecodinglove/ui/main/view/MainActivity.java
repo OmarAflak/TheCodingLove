@@ -1,11 +1,16 @@
 package me.aflak.thecodinglove.ui.main.view;
 
+
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +21,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.aflak.thecodinglove.MyApp;
 import me.aflak.thecodinglove.R;
 import me.aflak.thecodinglove.entitiy.Post;
 import me.aflak.thecodinglove.ui.main.data.DaggerMainComponent;
@@ -28,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @BindView(R.id.activity_main_description) TextView description;
 
     @Inject MainPresenter presenter;
+    @Inject Typeface typeface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +43,27 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
         ButterKnife.bind(this);
         DaggerMainComponent.builder()
+                .appModule(MyApp.app.appModule())
                 .mainModule(new MainModule(this))
                 .build().inject(this);
 
+        init();
         presenter.onCreate();
+    }
+
+    private void init(){
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar!=null){
+            TextView tv = new TextView(getApplicationContext());
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
+            tv.setLayoutParams(lp);
+            tv.setText(R.string.app_name);
+            tv.setTextSize(20);
+            tv.setTextColor(Color.parseColor("#FFFFFF"));
+            tv.setTypeface(typeface);
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setCustomView(tv);
+        }
     }
 
     @OnClick(R.id.activity_main_next)
