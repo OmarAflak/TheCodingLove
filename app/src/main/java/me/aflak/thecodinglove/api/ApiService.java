@@ -1,5 +1,8 @@
 package me.aflak.thecodinglove.api;
 
+import android.text.Html;
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,22 +29,28 @@ public class ApiService {
             api.getPosts(page, perPage).enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
-                    String body = response.body();
-                    try {
-                        JSONArray array = new JSONArray(body);
-                        List<Post> posts = new ArrayList<>();
-                        for(int i=0 ; i<array.length() ; i++){
-                            JSONObject object = array.getJSONObject(i);
-                            String description = object.getJSONObject("title").getString("rendered");
-                            String html = object.getJSONObject("content").getString("rendered");
-                            Document document = Jsoup.parse(html);
-                            String url = document.getElementsByTag("img").first().absUrl("src");
-                            posts.add(new Post(description, url));
+                    if(response.isSuccessful()) {
+                        String body = response.body();
+                        try {
+                            Log.d(getClass().getSimpleName(), body);
+
+                            JSONArray array = new JSONArray(body);
+                            List<Post> posts = new ArrayList<>();
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject object = array.getJSONObject(i);
+                                String description = Jsoup.parse(object.getJSONObject("title").getString("rendered")).body().text();
+                                String url = object.getJSONObject("content").getString("rendered");
+                                url = Html.fromHtml(Jsoup.parse(url).getElementsByTag("img").first().absUrl("src")).toString();
+                                posts.add(new Post(description, url));
+                            }
+                            callback.onPosts(posts);
+                        } catch (JSONException e) {
+                            callback.onError("Could not parse json : " + e.getMessage());
+                            e.printStackTrace();
                         }
-                        callback.onPosts(posts);
-                    } catch (JSONException e) {
-                        callback.onError("Could not parse json : "+e.getMessage());
-                        e.printStackTrace();
+                    }
+                    else{
+                        callback.onError("Could not request");
                     }
                 }
 

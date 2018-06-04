@@ -17,7 +17,7 @@ public class ApiModule {
     @Provides @Singleton
     public Api provideApi(ScalarsConverterFactory converterFactory){
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://thecodinglove.com/")
+                .baseUrl("https://thecodinglove.com")
                 .addConverterFactory(converterFactory)
                 .build();
 
