@@ -23,6 +23,7 @@
         android:gravity="center"
         android:textSize="23sp"
         android:textStyle="bold"
+        android:fontFamily="@font/fira_mono_regular"
         android:layout_alignParentTop="true"/>
 
     <ImageView
@@ -44,6 +45,7 @@
             android:layout_weight="1"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/fira_mono_regular"
             android:text="@string/activity_main_previous"/>
 
         <Button
@@ -51,6 +53,7 @@
             android:layout_weight="1"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/fira_mono_regular"
             android:text="@string/activity_main_next"/>
 
     </LinearLayout>
