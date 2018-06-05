@@ -34,7 +34,7 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="a64f89" />
+                                      <entry key="backgroundColor" value="ff5b9d" />
                                       <entry key="foregroundImage" value="$PROJECT_DIR$/app/src/main/res/drawable-v24/code.xml" />
                                       <entry key="legacyIconShape" value="CIRCLE" />
                                       <entry key="webIconShape" value="CIRCLE" />
