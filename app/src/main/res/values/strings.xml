@@ -3,4 +3,7 @@
 
     <string name="activity_main_previous">Previous</string>
     <string name="activity_main_next">Next</string>
+
+    <string name="main_menu_github">Github Repo</string>
+    <string name="github_repo_link">https://github.com/OmarAflak/TheCodingLove</string>
 </resources>

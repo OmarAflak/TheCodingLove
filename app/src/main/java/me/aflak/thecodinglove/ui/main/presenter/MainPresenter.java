@@ -1,5 +1,6 @@
 package me.aflak.thecodinglove.ui.main.presenter;
 
+import android.content.Context;
 import android.os.Bundle;
 
 public interface MainPresenter {
@@ -7,4 +8,5 @@ public interface MainPresenter {
     void onSaveInstance(Bundle bundle);
     void previousPost();
     void nextPost();
+    void menuGithubRepoClicked(Context context);
 }

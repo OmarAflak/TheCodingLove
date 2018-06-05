@@ -7,7 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.menu.MenuBuilder;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -68,6 +72,24 @@ public class MainActivity extends AppCompatActivity implements MainView {
             tv.setTypeface(typeface);
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             actionBar.setCustomView(tv);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.main_menu_github:
+                presenter.menuGithubRepoClicked(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
