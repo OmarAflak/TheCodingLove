@@ -1,6 +1,9 @@
 package me.aflak.thecodinglove.ui.main.interactor;
 
+import android.os.Bundle;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -24,6 +27,31 @@ public class MainInteractorImpl implements MainInteractor {
         postList = new ArrayList<>();
 
         MyApp.app.apiComponent().inject(this);
+    }
+
+    @Override
+    public void saveInstanceState(Bundle bundle) {
+        bundle.putInt("page", page);
+        bundle.putInt("index", currentIndex);
+        bundle.putParcelableArray("posts", postList.toArray(new Post[postList.size()]));
+    }
+
+    @Override
+    public void restoreInstanceState(Bundle bundle) {
+        page = bundle.getInt("page");
+        currentIndex = bundle.getInt("index");
+        Post[] posts = (Post[]) bundle.getParcelableArray("posts");
+        if(posts!=null) {
+            postList = Arrays.asList(posts);
+        }
+        else{
+            postList.clear();
+        }
+    }
+
+    @Override
+    public void currentPost(PostCallback callback) {
+        getPost(currentIndex, callback);
     }
 
     @Override

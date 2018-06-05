@@ -1,8 +1,9 @@
 package me.aflak.thecodinglove.ui.main.view;
 
-
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +16,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import javax.inject.Inject;
 
@@ -48,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 .build().inject(this);
 
         init();
-        presenter.onCreate();
+        presenter.onCreate(savedInstanceState);
     }
 
     private void init(){
@@ -64,6 +69,12 @@ public class MainActivity extends AppCompatActivity implements MainView {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             actionBar.setCustomView(tv);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        presenter.onSaveInstance(outState);
     }
 
     @OnClick(R.id.activity_main_next)
@@ -87,8 +98,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
-    public void showPost(Post post) {
-        Glide.with(this).load(post.getLink()).into(imageView);
+    public void showPost(Post post, RequestListener<Drawable> listener) {
+        Glide.with(this).load(post.getLink()).listener(listener).into(imageView);
         description.setText(post.getDescription());
     }
 

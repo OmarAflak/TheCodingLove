@@ -1,6 +1,14 @@
 package me.aflak.thecodinglove.ui.main.presenter;
 
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
+
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import me.aflak.thecodinglove.entitiy.Post;
 import me.aflak.thecodinglove.ui.main.interactor.MainInteractor;
@@ -16,9 +24,31 @@ public class MainPresenterImpl implements MainPresenter {
     }
 
     @Override
-    public void onCreate() {
+    public void onCreate(Bundle bundle) {
         view.showProgress();
-        nextPost();
+
+        if(bundle==null) {
+            nextPost();
+        }
+        else{
+            interactor.restoreInstanceState(bundle);
+            interactor.currentPost(new MainInteractor.PostCallback() {
+                @Override
+                public void onPost(Post post) {
+                    view.showPost(post, requestListener);
+                }
+
+                @Override
+                public void onError(String error) {
+                    view.toast(error);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onSaveInstance(Bundle bundle) {
+        interactor.saveInstanceState(bundle);
     }
 
     @Override
@@ -27,15 +57,13 @@ public class MainPresenterImpl implements MainPresenter {
         interactor.previousPost(new MainInteractor.PostCallback() {
             @Override
             public void onPost(Post post) {
-                view.showPost(post);
-                view.hideProgress();
+                view.showPost(post, requestListener);
             }
 
             @Override
             public void onError(String error) {
                 view.hideProgress();
                 view.toast(error);
-                Log.d(getClass().getSimpleName(), error);
             }
         });
     }
@@ -46,16 +74,30 @@ public class MainPresenterImpl implements MainPresenter {
         interactor.nextPost(new MainInteractor.PostCallback() {
             @Override
             public void onPost(Post post) {
-                view.showPost(post);
-                view.hideProgress();
+                view.showPost(post, requestListener);
             }
 
             @Override
             public void onError(String error) {
                 view.hideProgress();
                 view.toast(error);
-                Log.d(getClass().getSimpleName(), error);
             }
         });
     }
+
+    private RequestListener<Drawable> requestListener = new RequestListener<Drawable>() {
+        @Override
+        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+            view.hideProgress();
+            view.toast("Could not load gif...");
+            nextPost();
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+            view.hideProgress();
+            return false;
+        }
+    };
 }
