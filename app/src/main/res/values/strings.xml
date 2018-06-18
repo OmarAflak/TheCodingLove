@@ -6,4 +6,6 @@
 
     <string name="main_menu_github">Github Repo</string>
     <string name="github_repo_link">https://github.com/OmarAflak/TheCodingLove</string>
+
+    <string name="main_share_image_text">Share GIF !</string>
 </resources>

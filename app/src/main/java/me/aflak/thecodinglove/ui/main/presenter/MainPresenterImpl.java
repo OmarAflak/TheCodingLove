@@ -95,6 +95,15 @@ public class MainPresenterImpl implements MainPresenter {
         context.startActivity(browserIntent);
     }
 
+    @Override
+    public void onImageLongClick(Context context) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
+        sendIntent.setType("text/plain");
+        context.startActivity(Intent.createChooser(sendIntent, context.getResources().getText(R.string.main_share_image_text)));
+    }
+
     private RequestListener<Drawable> requestListener = new RequestListener<Drawable>() {
         @Override
         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {

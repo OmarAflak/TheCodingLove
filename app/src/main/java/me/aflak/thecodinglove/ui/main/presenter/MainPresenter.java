@@ -9,4 +9,5 @@ public interface MainPresenter {
     void previousPost();
     void nextPost();
     void menuGithubRepoClicked(Context context);
+    void onImageLongClick(Context context);
 }

@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 import me.aflak.thecodinglove.MyApp;
 import me.aflak.thecodinglove.R;
 import me.aflak.thecodinglove.entitiy.Post;
@@ -73,6 +74,12 @@ public class MainActivity extends AppCompatActivity implements MainView {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             actionBar.setCustomView(tv);
         }
+    }
+
+    @OnLongClick(R.id.activity_main_imageview)
+    public boolean onLongClick(){
+        presenter.onImageLongClick(this);
+        return true;
     }
 
     @Override
