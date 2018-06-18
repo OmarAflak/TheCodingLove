@@ -10,6 +10,7 @@ public interface MainInteractor {
     void currentPost(PostCallback callback);
     void nextPost(PostCallback callback);
     void previousPost(PostCallback callback);
+    Post getCurrentPost();
 
     interface PostCallback{
         void onPost(Post post);

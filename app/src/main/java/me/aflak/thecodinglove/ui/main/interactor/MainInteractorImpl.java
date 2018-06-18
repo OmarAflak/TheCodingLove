@@ -64,6 +64,11 @@ public class MainInteractorImpl implements MainInteractor {
         getPost(--currentIndex, callback);
     }
 
+    @Override
+    public Post getCurrentPost() {
+        return postList.get(currentIndex);
+    }
+
     private void getPost(int index, final PostCallback callback){
         if(callback != null){
             if(!postList.isEmpty()){

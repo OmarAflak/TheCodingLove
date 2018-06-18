@@ -1,16 +1,27 @@
 package me.aflak.thecodinglove.ui.main.presenter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ShareCompat;
+import android.support.v4.content.FileProvider;
+import android.util.Log;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+
+import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 import me.aflak.thecodinglove.R;
 import me.aflak.thecodinglove.entitiy.Post;
@@ -96,12 +107,32 @@ public class MainPresenterImpl implements MainPresenter {
     }
 
     @Override
-    public void onImageLongClick(Context context) {
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-        sendIntent.setType("text/plain");
-        context.startActivity(Intent.createChooser(sendIntent, context.getResources().getText(R.string.main_share_image_text)));
+    public void onImageLongClick(final Context context) {
+        final Post post = interactor.getCurrentPost();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    File file = Glide.with(context).downloadOnly().load(post.getLink()).submit().get();
+                    Uri uri = FileProvider.getUriForFile(context, context.getPackageName(), file);
+                    Intent intent = ShareCompat.IntentBuilder.from((Activity) context)
+                            .setType("image/gif")
+                            .setText("<lol>"+post.getDescription()+"</lol>")
+                            .setStream(uri)
+                            .setChooserTitle(R.string.main_share_image_text)
+                            .createChooserIntent()
+                            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    context.startActivity(intent);
+
+
+                    Log.d("PRESENTER", file.getAbsolutePath());
+                    Log.d("PRESENTER", context.getCacheDir().getAbsolutePath());
+
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private RequestListener<Drawable> requestListener = new RequestListener<Drawable>() {
