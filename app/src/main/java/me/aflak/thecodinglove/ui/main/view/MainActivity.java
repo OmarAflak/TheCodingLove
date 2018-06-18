@@ -21,8 +21,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 
 import javax.inject.Inject;
@@ -128,7 +130,15 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @Override
     public void showPost(Post post, RequestListener<Drawable> listener) {
-        Glide.with(this).load(post.getLink()).listener(listener).into(imageView);
+        RequestOptions options = new RequestOptions()
+                .diskCacheStrategy(DiskCacheStrategy.ALL);
+
+        Glide.with(this)
+                .load(post.getLink())
+                .apply(options)
+                .listener(listener)
+                .into(imageView);
+
         description.setText(post.getDescription());
     }
 

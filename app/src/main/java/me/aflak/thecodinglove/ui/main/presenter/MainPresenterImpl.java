@@ -21,6 +21,13 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 import me.aflak.thecodinglove.R;
@@ -113,8 +120,23 @@ public class MainPresenterImpl implements MainPresenter {
             @Override
             public void run() {
                 try {
-                    File file = Glide.with(context).downloadOnly().load(post.getLink()).submit().get();
-                    Uri uri = FileProvider.getUriForFile(context, context.getPackageName(), file);
+                    File file = Glide.with(context)
+                            .downloadOnly()
+                            .load(post.getLink())
+                            .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                            .get();
+
+                    File dst = new File(file.getParent(), file.getName()+".gif");
+                    copy(file, dst);
+
+                    Log.d(getClass().getSimpleName(), file.getParent());
+                    Log.d("LIST", Arrays.toString(new File(file.getParent()).list()));
+
+                    Log.d("PRESENTER", file.getAbsolutePath());
+                    Log.d("PRESENTER", dst.getAbsolutePath());
+
+                    Uri uri = FileProvider.getUriForFile(context, context.getPackageName(), dst);
+
                     Intent intent = ShareCompat.IntentBuilder.from((Activity) context)
                             .setType("image/gif")
                             .setText("<lol>"+post.getDescription()+"</lol>")
@@ -122,14 +144,11 @@ public class MainPresenterImpl implements MainPresenter {
                             .setChooserTitle(R.string.main_share_image_text)
                             .createChooserIntent()
                             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
                     context.startActivity(intent);
-
-
-                    Log.d("PRESENTER", file.getAbsolutePath());
-                    Log.d("PRESENTER", context.getCacheDir().getAbsolutePath());
-
-                } catch (InterruptedException | ExecutionException e) {
+                } catch (InterruptedException | ExecutionException | IOException e) {
                     e.printStackTrace();
+                    Log.e(getClass().getSimpleName(), e.getMessage());
                 }
             }
         }).start();
@@ -150,4 +169,22 @@ public class MainPresenterImpl implements MainPresenter {
             return false;
         }
     };
+
+    public static void copy(File src, File dst) throws IOException {
+        InputStream in = new FileInputStream(src);
+        try {
+            OutputStream out = new FileOutputStream(dst);
+            try {
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            } finally {
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
+    }
 }
